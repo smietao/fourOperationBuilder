@@ -3,6 +3,7 @@ package com.gdut.builder.service.impl;
 
 import com.gdut.builder.model.Fraction;
 import com.gdut.builder.model.ResultMap;
+import com.gdut.builder.service.CalculateService;
 import com.gdut.builder.service.FractionService;
 import com.gdut.builder.service.GenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ public class GenerateServiceImpl implements GenerateService {
     @Autowired
     private FractionService fractionService;
 
+    @Autowired
+    private CalculateService calculateService;
 
     /*
      * 生成算式，以及结果 limit表示生成每一个分式的最大值
@@ -82,8 +85,11 @@ public class GenerateServiceImpl implements GenerateService {
             // 不符合规则，返回null
             return null;
         }
-        // TODO 计算该表达式的值
-        return new ResultMap(expression, "unknown");
+        Fraction resultFra = calculateService.calculate(FraSymList);
+        if (resultFra == null) {
+            return null;
+        }
+        return new ResultMap(expression, resultFra.toString());
     }
 
     @Override

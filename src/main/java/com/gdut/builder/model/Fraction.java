@@ -114,7 +114,7 @@ public class Fraction {
         this.denominator /= gcd;
     }
 
-    public int existZero() {
+    public int isPositive() {
         if (this.nominator < 0 || this.denominator < 0) {
             return 0;
         } else {

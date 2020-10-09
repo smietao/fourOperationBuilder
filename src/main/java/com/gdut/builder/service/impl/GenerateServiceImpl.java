@@ -2,6 +2,7 @@ package com.gdut.builder.service.impl;
 
 
 import com.gdut.builder.model.Fraction;
+import com.gdut.builder.model.ResultMap;
 import com.gdut.builder.service.FractionService;
 import com.gdut.builder.service.GenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,11 @@ public class GenerateServiceImpl implements GenerateService {
     @Autowired
     private FractionService fractionService;
 
+
     /*
      * 生成算式，以及结果 limit表示生成每一个分式的最大值
      */
-    public String generateFormula(int limit) {
-
+    public ResultMap generate(int maxLimit) {
         String expression = "";
         Random r = new Random();
 
@@ -44,12 +45,12 @@ public class GenerateServiceImpl implements GenerateService {
         }
         for (int i = 0; i < fractionCount; i++) {
             // 遍历分数的个数
-            fractionList.add(new Fraction(true, limit));
+            fractionList.add(new Fraction(true, maxLimit));
         }
         // 剩下的就是非分数
         if (unFractionCount >= 0) {
             for (int i = 0; i < unFractionCount; i++) {
-                fractionList.add(new Fraction(false, limit));
+                fractionList.add(new Fraction(false, maxLimit));
             }
         }
 
@@ -81,9 +82,25 @@ public class GenerateServiceImpl implements GenerateService {
             // 不符合规则，返回null
             return null;
         }
-        return expression;
-
-
+        // TODO 计算该表达式的值
+        return new ResultMap(expression, "unknown");
     }
+
+    @Override
+    public List<ResultMap> generateList(int questionNum, int maxLimit) {
+        List<ResultMap> resultMapList = new ArrayList<>();
+        int i = 0;
+        while (i < questionNum) {
+            // 生成questionNum个结果
+            ResultMap resultMap = generate(maxLimit);
+            if (resultMap == null) {
+                continue;
+            }
+            resultMapList.add(resultMap);
+            i++;
+        }
+        return resultMapList;
+    }
+
 
 }

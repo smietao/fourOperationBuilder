@@ -1,17 +1,22 @@
 package com.gdut.builder.controller;
 
-import org.springframework.stereotype.Controller;
+import com.gdut.builder.model.ResultMap;
+import com.gdut.builder.service.GenerateService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import java.util.List;
+
+@RestController
 public class IndexController {
 
+    @Autowired
+    private GenerateService generateService;
+
     @PostMapping("/generate")
-    @ResponseBody
-    public String generate(Integer questionNum,Integer maxLimit) {
-        System.out.println("设定的题目数量为" + questionNum);
-        System.out.println("题目中数值最大值为" + maxLimit);
-        return "操作成功";
+    public List<ResultMap> generate(Integer questionNum, Integer maxLimit) {
+        return generateService.generateList(questionNum,maxLimit);
     }
+
 }

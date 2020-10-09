@@ -2,15 +2,20 @@ package com.gdut.builder.service.impl;
 
 
 import com.gdut.builder.model.Fraction;
+import com.gdut.builder.service.FractionService;
 import com.gdut.builder.service.GenerateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@Service
 public class GenerateServiceImpl implements GenerateService {
 
-    private static FractionServiceImpl fractionService = new FractionServiceImpl();
+    @Autowired
+    private FractionService fractionService;
 
     /*
      * 生成算式，以及结果 limit表示生成每一个分式的最大值

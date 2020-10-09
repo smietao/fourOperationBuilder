@@ -2,10 +2,12 @@ package com.gdut.builder.service.impl;
 
 import com.gdut.builder.model.Fraction;
 import com.gdut.builder.service.FractionService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
+@Service
 public class FractionServiceImpl implements FractionService {
 
     /*

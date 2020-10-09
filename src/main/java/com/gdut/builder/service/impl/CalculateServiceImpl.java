@@ -103,4 +103,9 @@ public class CalculateServiceImpl implements CalculateService {
         }
         return "right";
     }
+
+    @Override
+    public String calculateFra(List FraSymList) {
+        return null;
+    }
 }

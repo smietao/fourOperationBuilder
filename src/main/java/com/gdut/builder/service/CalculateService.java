@@ -7,4 +7,11 @@ import java.util.List;
 public interface CalculateService {
 
     Fraction calculate(List FraSymList);
+
+    /**
+     * 中缀转前缀方法
+     * @param FraSymList 表达式拆分集合，包含运算数和运算符
+     * @return 计算答案
+     */
+    String calculateFra(List FraSymList);
 }

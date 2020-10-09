@@ -82,24 +82,18 @@ public class CalculateServiceImpl implements CalculateService {
     // 计算分式的加减，计算结果往前放
     public String AddSubCal(List list) {
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).equals("+")) {
-                Fraction first = (Fraction) list.get(i - 1);
+            if (list.get(i).equals("+") || list.get(i).equals("-")) {
+                String operation = (String) list.get(i);
+                Fraction beforeFraction = (Fraction) list.get(i - 1);
                 list.remove(i);
-                Fraction last = (Fraction) list.get(i);
+                Fraction afterFraction = (Fraction) list.get(i);
                 list.remove(i);
-                Fraction result = first.add(last);
-                list.set(i - 1, result);
-                i--;
-                if (result.isPositive() == 0) {
-                    return "error";
+                Fraction result;
+                if (operation.equals("+")) {
+                    result = beforeFraction.add(afterFraction);
+                } else {
+                    result = beforeFraction.sub(afterFraction);
                 }
-            }
-            if (list.get(i).equals("-")) {
-                Fraction first = (Fraction) list.get(i - 1);
-                list.remove(i);
-                Fraction last = (Fraction) list.get(i);
-                list.remove(i);
-                Fraction result = first.sub(last);
                 list.set(i - 1, result);
                 i--;
                 if (result.isPositive() == 0) {

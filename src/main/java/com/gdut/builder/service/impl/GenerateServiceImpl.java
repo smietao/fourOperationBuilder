@@ -2,7 +2,7 @@ package com.gdut.builder.service.impl;
 
 
 import com.gdut.builder.model.Fraction;
-import com.gdut.builder.model.ResultMap;
+import com.gdut.builder.model.Result;
 import com.gdut.builder.service.CalculateService;
 import com.gdut.builder.service.FractionService;
 import com.gdut.builder.service.GenerateService;
@@ -25,7 +25,7 @@ public class GenerateServiceImpl implements GenerateService {
     /*
      * 生成算式，以及结果 limit表示生成每一个分式的最大值
      */
-    public ResultMap generate(int maxLimit) {
+    public Result generate(int maxLimit) {
         String expression = "";
         Random r = new Random();
 
@@ -89,23 +89,25 @@ public class GenerateServiceImpl implements GenerateService {
         if (resultFra == null) {
             return null;
         }
-        return new ResultMap(expression, resultFra.toString());
+        return new Result(expression, resultFra.toString());
     }
 
     @Override
-    public List<ResultMap> generateList(int questionNum, int maxLimit) {
-        List<ResultMap> resultMapList = new ArrayList<>();
-        int i = 0;
-        while (i < questionNum) {
+    public List<Result> generateList(int questionNum, int maxLimit) {
+        List<Result> resultList = new ArrayList<>();
+        int i = 1;
+        while (i <= questionNum) {
             // 生成questionNum个结果
-            ResultMap resultMap = generate(maxLimit);
-            if (resultMap == null) {
+            Result result = generate(maxLimit);
+            if (result == null) {
                 continue;
             }
-            resultMapList.add(resultMap);
+            // 设置题目编号
+            result.setNumber(i);
+            resultList.add(result);
             i++;
         }
-        return resultMapList;
+        return resultList;
     }
 
 

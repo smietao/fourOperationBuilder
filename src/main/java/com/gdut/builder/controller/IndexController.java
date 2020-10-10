@@ -1,6 +1,6 @@
 package com.gdut.builder.controller;
 
-import com.gdut.builder.model.ResultMap;
+import com.gdut.builder.model.Result;
 import com.gdut.builder.service.GenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +15,7 @@ public class IndexController {
     private GenerateService generateService;
 
     @PostMapping("/generate")
-    public List<ResultMap> generate(Integer questionNum, Integer maxLimit) {
+    public List<Result> generate(Integer questionNum, Integer maxLimit) {
         return generateService.generateList(questionNum,maxLimit);
     }
 

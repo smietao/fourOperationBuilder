@@ -3,14 +3,16 @@ package com.gdut.builder.model;
 /*
  * 运算式+运算结果 包装类
  */
-public class ResultMap {
+public class Result {
 
+    // 题目编号
+    private Integer number;
     // 运算表达式
     private String exp;
     // 运算结果
     private String result;
 
-    public ResultMap(String exp, String result) {
+    public Result(String exp, String result) {
         super();
         this.exp = exp;
         this.result = result;
@@ -39,6 +41,14 @@ public class ResultMap {
 
     public String toStringExp() {
         return exp + " = ";
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
 }

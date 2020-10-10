@@ -1,7 +1,7 @@
 package com.gdut.builder.service;
 
 
-import com.gdut.builder.model.ResultMap;
+import com.gdut.builder.model.Result;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface GenerateService {
      * @param limit 生成每一个算式的最大值
      * @return 算式表达式
      */
-    ResultMap generate(int limit);
+    Result generate(int limit);
 
     /**
      * 根据两个规定的入参生成结果集合
@@ -21,5 +21,5 @@ public interface GenerateService {
      * @param maxLimit 题目中最大的数值
      * @return 运算式+结果 List集合
      */
-    List<ResultMap> generateList(int questionNum, int maxLimit);
+    List<Result> generateList(int questionNum, int maxLimit);
 }

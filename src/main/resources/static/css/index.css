@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+input {
+    outline: none;
+    border-radius: 4px;
+    border-color: darkgray;
+}
+.tableBox {
+    height: 400px;
+    overflow-y: auto;
+}
+.tableBox::-webkit-scrollbar {
+    display:none;
+}
+.tableBox table {
+    width: auto !important;
+    margin: auto;
+    border-collapse: separate !important;
+}
+form {
+    width: 400px;
+    margin: auto;
+    padding: 10px 0;
+}
+button {
+    margin: auto;
+}
+.alert {
+    width: auto;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.invalid-feedback {
+    display: block;
+}
+nav {
+    text-align: center;
+    margin-top: 10px;
+}
+nav .pagination,
+nav .pagination li {
+    display: inline-block;
+}

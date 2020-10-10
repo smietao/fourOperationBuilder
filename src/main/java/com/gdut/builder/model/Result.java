@@ -10,12 +10,12 @@ public class Result {
     // 运算表达式
     private String exp;
     // 运算结果
-    private String result;
+    private String answer;
 
-    public Result(String exp, String result) {
+    public Result(String exp, String answer) {
         super();
         this.exp = exp;
-        this.result = result;
+        this.answer = answer;
     }
 
     public String getExp() {
@@ -26,17 +26,17 @@ public class Result {
         this.exp = exp;
     }
 
-    public String getResult() {
-        return result;
+    public String getAnswer() {
+        return answer;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
     @Override
     public String toString() {
-        return exp + " = " + result;
+        return exp + " = " + answer;
     }
 
     public String toStringExp() {

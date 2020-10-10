@@ -104,6 +104,12 @@ public class GenerateServiceImpl implements GenerateService {
             }
             // 设置题目编号
             result.setNumber(i);
+            // 判断题目是否一样
+            boolean isSame = fractionService.checkSame(result, resultList);
+            if (isSame) {
+                // 如果相同，跳过该运算式
+                continue;
+            }
             resultList.add(result);
             i++;
         }

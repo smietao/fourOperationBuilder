@@ -49,8 +49,6 @@ public class FractionServiceImpl implements FractionService {
      * @return true-有相同的运算式 false没有相同的运算式
      */
     public boolean checkSame(Result result, List<Result> resultList) {
-        List<String> list = convertExpToList(result.getExp());
-        System.out.println(list);
         if (resultList == null || resultList.size() == 0) {
             return false;
         }

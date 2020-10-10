@@ -63,14 +63,14 @@ public class GenerateServiceImpl implements GenerateService {
         for (int i = 0; i < symbolList.size(); i++) {
             Fraction fraction = fractionList.get(i);
             String symbol = symbolList.get(i);
-            expression = expression + " " + fraction.toString() + " " + symbol;
+            expression = expression + fraction.toString() + " " + symbol + " ";
             FraSymList.add(fraction);
             FraSymList.add(symbol);
             j++;
         }
         // 拼接最后一个运算数
         Fraction lastFraction = fractionList.get(j);
-        expression = expression + " " + lastFraction;
+        expression = expression + lastFraction;
         FraSymList.add(lastFraction);
 
         // 将除号转换为计算用的/

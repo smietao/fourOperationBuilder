@@ -170,7 +170,7 @@ public class GenerateServiceImpl implements GenerateService {
             } else if (i == 4) {
                 // 24
                 addIndex = 2;
-                addDiff = 5;
+                addDiff = 6;
             } else {
                 // 34
                 addIndex = 4;

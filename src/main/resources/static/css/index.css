@@ -24,15 +24,13 @@ button {
 }
 
 .formBox .tableBox {
+    width: 700px;
+    margin: auto;
     height: 400px;
     overflow-y: auto;
 }
-.formBox .tableBox::-webkit-scrollbar {
-    display:none;
-}
 .formBox .tableBox table {
-    width: auto !important;
-    margin: auto;
+    /*width: 650px !important;*/
     border-collapse: separate !important;
 }
 .formBox .tableBox table thead th {

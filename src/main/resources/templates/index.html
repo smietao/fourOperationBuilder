@@ -101,9 +101,9 @@
                     </div>
                     <div class="modal-body">
                         correct:
-                        <p>{{ correctList }}</p>
+                        <p>{{ correctList.length }} {{ correctList }}</p>
                         wrong:
-                        <p>{{ errorList }}</p>
+                        <p>{{ errorList.length }} {{ errorList }}</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
@@ -135,7 +135,7 @@
                 correctList: [], // 正确的题号列表
                 errorList: [], // 错误的题号列表
                 selected: 10, // 分页器每页显示的题目数量
-                options: [10, 20, 50, 100, 500], // 分页选项
+                options: [], // 分页选项
                 pagesSize: 1, // 分页器的页数
                 currIndex: 1 // 当前页码
             },
@@ -158,9 +158,20 @@
                             }
                             this.inputAnsList = Array(this.ansList.length).fill("") // 将输入的答案数组初始化为空
 
+                            let len = this.quesList.length
                             this.showTable = true
                             this.showQuesList = this.quesList.slice(0, this.selected) // 获取第一页的数据
-                            this.pagesSize = Math.ceil(this.quesList.length / this.selected)
+                            this.pagesSize = Math.ceil(len / this.selected)
+                            if (len < 200 ) {
+                                this.selected = 10
+                                this.options = [10, 20, 50, 100]
+                            } else if (len < 1000) {
+                                this.selected = 50
+                                this.options = [50, 100, 500]
+                            } else {
+                                this.selected = 500
+                                this.options = [500]
+                            }
                         })
                     } else {
                         // 没有输入数据或数据类型错误

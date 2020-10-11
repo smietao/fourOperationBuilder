@@ -77,6 +77,10 @@ public class Fraction {
         int nom = r.getNominator(); // 分子
         int den = r.getDenominator(); // 分母
         int newNominator = nominator * den - denominator * nom;
+        if (newNominator < 0) {
+            // 如果分子小于0，说明是负数
+            return null;
+        }
         int newDenominator = denominator * den;
         return new Fraction(newDenominator, newNominator);
     }
@@ -93,6 +97,10 @@ public class Fraction {
     // 分数除法运算
     public Fraction div(Fraction r) {
         int nom = r.getNominator(); // 分子
+        if (nom == 0) {
+            // 分子是0
+            return null;
+        }
         int den = r.getDenominator(); // 分母
         int newNominator = nominator * den;
         int newDenominator = denominator * nom;

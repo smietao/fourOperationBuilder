@@ -41,7 +41,7 @@ public class GenerateServiceImpl implements GenerateService {
         // 存放符号的List集合
         List<String> symbolList = new ArrayList<>();
         // 存放运算数和运算符
-        List FraSymList = new ArrayList();
+        List fraSymList = new ArrayList();
         for (int i = 0; i < operaCount; i++) {
             // 遍历运算符个数，一个运算符生成一个数
             symbolList.add(String.valueOf(c[r.nextInt(4)]));
@@ -64,28 +64,36 @@ public class GenerateServiceImpl implements GenerateService {
             Fraction fraction = fractionList.get(i);
             String symbol = symbolList.get(i);
             expression = expression + fraction.toString() + " " + symbol + " ";
-            FraSymList.add(fraction);
-            FraSymList.add(symbol);
+            fraSymList.add(fraction);
+            fraSymList.add(symbol);
             j++;
         }
         // 拼接最后一个运算数
         Fraction lastFraction = fractionList.get(j);
         expression = expression + lastFraction;
-        FraSymList.add(lastFraction);
+        fraSymList.add(lastFraction);
 
         // 将除号转换为计算用的/
-        for (int i = 0; i < FraSymList.size(); i++) {
+        for (int i = 0; i < fraSymList.size(); i++) {
             if (i % 2 != 0) {
-                if (FraSymList.get(i).equals("÷")) {
-                    FraSymList.set(i, "/");
+                if (fraSymList.get(i).equals("÷")) {
+                    fraSymList.set(i, "/");
                 }
             }
         }
-        if (!fractionService.isRule(FraSymList)) {
+        if (!fractionService.isRule(fraSymList)) {
             // 不符合规则，返回null
             return null;
         }
-        Fraction resultFra = calculateService.calculateFra(FraSymList);
+        List testList = new ArrayList();
+        testList.add(new Fraction(0));
+        testList.add("*");
+        testList.add(new Fraction(3));
+        testList.add("*");
+        testList.add(new Fraction(3));
+        testList.add("-");
+        testList.add(new Fraction(1));
+        Fraction resultFra = calculateService.calculateFra(testList);
         if (resultFra == null) {
             return null;
         }

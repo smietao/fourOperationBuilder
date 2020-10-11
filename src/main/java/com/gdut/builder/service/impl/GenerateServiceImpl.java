@@ -26,7 +26,6 @@ public class GenerateServiceImpl implements GenerateService {
      * 生成算式，以及结果 limit表示生成每一个分式的最大值
      */
     public Result generate(int maxLimit) {
-        String expression = "";
         Random r = new Random();
 
         char[] c = {'+', '-', '*', '÷'};
@@ -63,14 +62,12 @@ public class GenerateServiceImpl implements GenerateService {
         for (int i = 0; i < symbolList.size(); i++) {
             Fraction fraction = fractionList.get(i);
             String symbol = symbolList.get(i);
-            expression = expression + fraction.toString() + " " + symbol + " ";
             fraSymList.add(fraction);
             fraSymList.add(symbol);
             j++;
         }
         // 拼接最后一个运算数
         Fraction lastFraction = fractionList.get(j);
-        expression = expression + lastFraction;
         fraSymList.add(lastFraction);
 
         // 将除号转换为计算用的/
@@ -85,11 +82,25 @@ public class GenerateServiceImpl implements GenerateService {
             // 不符合规则，返回null
             return null;
         }
-        Fraction resultFra = calculateService.calculateFra(fraSymList);
+        List newFraSymList = addBracket(fraSymList);
+        Fraction resultFra = calculateService.calculateFra(newFraSymList);
+
         if (resultFra == null) {
             return null;
         }
-        return new Result(expression, resultFra.toString());
+        String expression = "";
+        for (int i = 0;i<newFraSymList.size();i++) {
+            if (newFraSymList.get(i) instanceof Fraction) {
+                Fraction fraction =(Fraction) newFraSymList.get(i);
+                // 如果是运算数
+                expression = expression + fraction.toString() + " ";
+            } else {
+                // 如果是运算符
+                expression = expression + newFraSymList.get(i) + " ";
+            }
+        }
+        String trimExpression = expression.trim();
+        return new Result(trimExpression, resultFra.toString());
     }
 
     @Override
@@ -116,5 +127,61 @@ public class GenerateServiceImpl implements GenerateService {
         return resultList;
     }
 
+    private List addBracket(List fractionList) {
+        Random r = new Random();
+        // 运算数+运算符的长度 必为奇数
+        int size = fractionList.size();
+        int addIndex;
+        int addDiff;
+        if (size == 3) {
+            // 如果总计3个，则没有运算顺序可言
+            return fractionList;
+        } else if (size == 5) {
+            // 则有三种情况 1+2+3 （1+2）+3 1+(2+3)
+            int i = r.nextInt(3);
+            if (i == 0) {
+                // 不加括号
+                return fractionList;
+            } else if (i == 1) {
+                addIndex = 0;
+                addDiff = 4;
+            } else {
+                addIndex = 2;
+                addDiff = 4;
+            }
+        } else {
+            // 剩下就是7个
+            // 两个括号情况：4个运算数 12 13 23 24 34
+            int i = r.nextInt(6);
+            if (i == 0) {
+                return fractionList;
+            } else if (i == 1) {
+                // 12
+                addIndex = 0;
+                addDiff = 4;
+            } else if (i == 2) {
+                // 13
+                addIndex = 0;
+                addDiff = 6;
+            } else if (i == 3) {
+                // 23
+                addIndex = 2;
+                addDiff = 4;
+            } else if (i == 4) {
+                // 24
+                addIndex = 2;
+                addDiff = 5;
+            } else {
+                // 34
+                addIndex = 4;
+                addDiff = 4;
+            }
+        }
+        System.out.println(addIndex);
+        System.out.println(addDiff);
+        fractionList.add(addIndex, "(");
+        fractionList.add(addIndex + addDiff, ")");
+        return fractionList;
+    }
 
 }

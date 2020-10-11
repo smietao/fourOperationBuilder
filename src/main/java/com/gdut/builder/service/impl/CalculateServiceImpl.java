@@ -4,7 +4,10 @@ import com.gdut.builder.model.Fraction;
 import com.gdut.builder.service.CalculateService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * 分数的计算类
@@ -15,24 +18,45 @@ public class CalculateServiceImpl implements CalculateService {
 
     @Override
     public Fraction calculate(List FraSymList) {
-        int mulDivIndex = mulDivExist(FraSymList);
-        if (mulDivIndex != -1) {
-            // 有乘除
-            String expression = mulDivCal(FraSymList, mulDivIndex);
-            if (expression.equals("error")) {
-                return null;
-            }
-        } else {
-            String expression = AddSubCal(FraSymList);
-            if (expression.equals("error")) {
-                return null;
+        Stack<Fraction> tempFrac = new Stack<Fraction>();
+        for (int i = 0; i < FraSymList.size(); i++) {
+            if (FraSymList.get(i) instanceof Fraction) { // 先将数字存入栈中
+                tempFrac.push((Fraction) FraSymList.get(i));
+            } else { // 遇到运算符，从栈中取出两个数字进行运算
+                if (FraSymList.get(i).equals("+")) {
+                    Fraction result = tempFrac.pop().add(tempFrac.pop());
+                    tempFrac.push(result);
+                } else if (FraSymList.get(i).equals("-")) {
+                    Fraction result = tempFrac.pop().sub(tempFrac.pop());
+                    tempFrac.push(result);
+                } else if (FraSymList.get(i).equals("*")) {
+                    Fraction result = tempFrac.pop().muti(tempFrac.pop());
+                    tempFrac.push(result);
+                } else {
+                    Fraction result = tempFrac.pop().div(tempFrac.pop());
+                    tempFrac.push(result);
+                }
             }
         }
-        if (FraSymList.size() == 1) {
-            // 只剩下一个，就是结果了
-            return (Fraction) FraSymList.get(0);
-        }
-        return calculate(FraSymList);
+//        int mulDivIndex = mulDivExist(FraSymList);
+//        if (mulDivIndex != -1) {
+//            // 有乘除
+//            String expression = mulDivCal(FraSymList, mulDivIndex);
+//            if (expression.equals("error")) {
+//                return null;
+//            }
+//        } else {
+//            String expression = AddSubCal(FraSymList);
+//            if (expression.equals("error")) {
+//                return null;
+//            }
+//        }
+//        if (FraSymList.size() == 1) {
+//            // 只剩下一个，就是结果了
+//            return (Fraction) FraSymList.get(0);
+//        }
+//        return calculate(FraSymList)
+        return tempFrac.pop();
     }
 
     /*
@@ -105,7 +129,55 @@ public class CalculateServiceImpl implements CalculateService {
     }
 
     @Override
-    public String calculateFra(List FraSymList) {
-        return null;
+    public Fraction calculateFra(List FraSymList) {
+        Stack tempOperator = new Stack(); // 临时存储运算符和 (
+        List operator = new ArrayList(); // 存储数值和运算符
+
+        int len = FraSymList.size(); // 数字和运算符的总长度
+        int times = 0; // 遍历次数
+
+        while(times < len) {
+            if (FraSymList.get(times) instanceof Fraction) {
+                Fraction chara = (Fraction) FraSymList.get(times);
+                operator.add(chara);
+            } else {
+                String chara = (String) FraSymList.get(times);
+                switch (chara) {
+                    case "(":
+                        tempOperator.push(chara); // 将 ( 入栈
+                        break;
+                    case ")":
+                        while (tempOperator.peek() != "(") { // 循环查找 ( 并返回，但不删除
+                            operator.add(tempOperator.pop()); // 将除 ) 外的运算符存入 operator 中
+                        }
+                        tempOperator.pop(); // 弹出 ( ，丢弃括号 ()
+                        break;
+                    case "+":
+                    case "-":
+                        while(!tempOperator.empty() && tempOperator.peek() != "(") {
+                            operator.add(tempOperator.pop());
+                        }
+                        tempOperator.push(chara);
+                        break;
+                    case "*":
+                    case "/":
+                        while(!tempOperator.empty() && tempOperator.peek().toString().matches("[*/]")) {
+                            operator.add(tempOperator.pop());
+                        }
+                        tempOperator.push(chara);
+                        break;
+                    default:
+                        operator.add(chara);
+                        break;
+                }
+            }
+            times++;
+        }
+
+        while(!tempOperator.empty()) {
+            operator.add(tempOperator.pop());
+        }
+        System.out.println(operator);
+        return calculate(operator);
     }
 }

@@ -14,7 +14,7 @@
                 <label for="InputNum">题目数量</label>
                 <input type="text" class="form-control" id="InputNum" v-model="inputNum" required>
                 <div class="invalid-feedback" v-if="numWarn">
-                    请输入题目数量
+                    请输入正确的题目数量
                 </div>
             </div>
             <div class="form-group">
@@ -22,7 +22,7 @@
                 <input type="text" class="form-control" id="InputScale" v-model="inputScale" required>
                 <small id="emailHelp" class="form-text text-muted">数值包括自然数、真分数和真分数分母</small>
                 <div class="invalid-feedback" v-if="scaleWarn">
-                    请输入最大值
+                    请输入正确的最大值
                 </div>
             </div>
             <button type="button" class="btn btn-primary" @click="generateQues">生成运算</button>
@@ -41,12 +41,12 @@
                     <th scope="row">{{ ques.number }}</th>
                     <td style="min-width: 400px !important;">{{ ques.exp }}</td>
                     <td>
-                        <input type="text" v-model="inputAnsList[index]">
+                        <input type="text" v-model="inputAnsList[ques.number - 1]">
                     </td>
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align: center">
-                        <button type="button" class="btn btn-success">提交答案</button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal" @click="submitAns">提交答案</button>
                     </td>
                 </tr>
                 </tbody>
@@ -82,6 +82,35 @@
                 </li>
             </ul>
         </nav>
+        <!-- 结果分析框 -->
+        <div
+                class="modal fade"
+                id="exampleModal"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">计算结果</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" v-if="this.correctList.length + this.errorList.length == this.quesList.length">
+                        correct:
+                        <p>{{ correctList }}</p>
+                        wrong:
+                        <p>{{ errorList }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -103,6 +132,8 @@
                 ansList: [], // 返回的答案列表
                 inputAnsList: [], // 用户输入的答案列表
                 showQuesList: [], // 当前页显示的题目列表
+                correctList: [], // 正确的题号列表
+                errorList: [], // 错误的题号列表
                 selected: 10, // 分页器每页显示的题目数量
                 options: [10, 20, 50, 100, 500], // 分页选项
                 pagesSize: 1, // 分页器的页数
@@ -115,28 +146,30 @@
                     this.ansList = []
                     this.scaleWarn = false
                     this.numWarn = false
+                    let reg = /^[0-9]+$/;
 
-                    if (this.inputNum !== "" && this.inputScale !== "") {
+                    if (reg.test(this.inputNum) && reg.test(this.inputScale)) {
                         axios.post("http://localhost:8080/generate?questionNum=" + this.inputNum + "&maxLimit=" + this.inputScale)
                             .then((res) => {
-                            for (let i of res.data) {
-                                let { result, ...question } = i
-                                let { exp, ...answer } = i
+                            for (let item of res.data) {
+                                let { answer, ...question } = item
                                 this.quesList.push(question)
                                 this.ansList.push(answer)
                             }
+                            this.inputAnsList = Array(this.ansList.length).fill("") // 将输入的答案数组初始化为空
+
                             this.showTable = true
                             this.showQuesList = this.quesList.slice(0, this.selected) // 获取第一页的数据
                             this.pagesSize = Math.ceil(this.quesList.length / this.selected)
                         })
                     } else {
                         // 没有输入数据或数据类型错误
-                        if (this.inputNum === "" && this.inputScale === "" ) {
+                        if (!reg.test(this.inputNum) && !reg.test(this.inputScale)) {
                             this.scaleWarn = true
                             this.numWarn = true
-                        } else if (this.inputNum === "") {
+                        } else if (!reg.test(this.inputNum)) {
                             this.numWarn = true
-                        } else if (this.inputScale === "") {
+                        } else if (!reg.test(this.inputScale)) {
                             this.scaleWarn = true
                         }
                     }
@@ -176,7 +209,6 @@
                 },
                 // 跳转到前一页
                 previousTo() {
-                    console.log(this.currIndex)
                     if (this.currIndex > 1) {
                         let startIndex = this.selected * (this.currIndex - 2)
                         let endIndex = this.selected * (this.currIndex - 1)
@@ -187,7 +219,6 @@
                 },
                 // 跳转到后一页
                 nextTo() {
-                    console.log(this.currIndex)
                     if (this.currIndex < this.pagesSize) {
                         let startIndex = this.selected * this.currIndex
                         let endIndex
@@ -200,6 +231,18 @@
                         this.showQuesList = this.quesList.slice(startIndex, endIndex)
                         this.$forceUpdate()
                         this.currIndex++
+                    }
+                },
+                // 提交答案
+                submitAns() {
+                    this.correctList = []
+                    this.errorList = []
+                    for (let [index, value] of this.inputAnsList.entries()) {
+                        if (value === this.ansList[index]) {
+                            this.correctList.push(index + 1)
+                        } else {
+                            this.errorList.push(index + 1)
+                        }
                     }
                 }
             }

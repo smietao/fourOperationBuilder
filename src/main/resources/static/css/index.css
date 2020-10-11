@@ -44,3 +44,6 @@ nav .pagination,
 nav .pagination li {
     display: inline-block;
 }
+th {
+    text-align: center;
+}

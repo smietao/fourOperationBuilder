@@ -85,15 +85,7 @@ public class GenerateServiceImpl implements GenerateService {
             // 不符合规则，返回null
             return null;
         }
-        List testList = new ArrayList();
-        testList.add(new Fraction(0));
-        testList.add("*");
-        testList.add(new Fraction(3));
-        testList.add("*");
-        testList.add(new Fraction(3));
-        testList.add("-");
-        testList.add(new Fraction(1));
-        Fraction resultFra = calculateService.calculateFra(testList);
+        Fraction resultFra = calculateService.calculateFra(fraSymList);
         if (resultFra == null) {
             return null;
         }

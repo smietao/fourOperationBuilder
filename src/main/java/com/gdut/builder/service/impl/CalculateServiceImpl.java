@@ -18,7 +18,7 @@ public class CalculateServiceImpl implements CalculateService {
 
     @Override
     public Fraction calculateFra(List fraSymList) {
-        Stack<String> tempOperator = new Stack<>(); // 临时存储运算符和 (
+        Stack tempOperator = new Stack(); // 临时存储运算符和 (
         List operator = new ArrayList(); // 存储数值和运算符
 
         int len = fraSymList.size(); // 数字和运算符的总长度
@@ -26,32 +26,30 @@ public class CalculateServiceImpl implements CalculateService {
 
         while (times < len) {
             if (fraSymList.get(times) instanceof Fraction) {
-                // 如果是运算数
-                Fraction fraction = (Fraction) fraSymList.get(times);
-                operator.add(fraction);
+                Fraction chara = (Fraction) fraSymList.get(times);
+                operator.add(chara);
             } else {
-                // 是运算符
                 String chara = (String) fraSymList.get(times);
                 switch (chara) {
                     case "(":
                         tempOperator.push(chara); // 将 ( 入栈
                         break;
                     case ")":
-                        while (tempOperator.peek().equals("(")) { // 循环查找 ( 并返回，但不删除
+                        while (tempOperator.peek() != "(") { // 循环查找 ( 并返回，但不删除
                             operator.add(tempOperator.pop()); // 将除 ) 外的运算符存入 operator 中
                         }
                         tempOperator.pop(); // 弹出 ( ，丢弃括号 ()
                         break;
                     case "+":
                     case "-":
-                        while (!tempOperator.empty() && tempOperator.peek().equals("(")) {
+                        while (!tempOperator.empty() && tempOperator.peek() != "(") {
                             operator.add(tempOperator.pop());
                         }
                         tempOperator.push(chara);
                         break;
                     case "*":
                     case "/":
-                        while (!tempOperator.empty() && tempOperator.peek().matches("[*/]")) {
+                        while (!tempOperator.empty() && tempOperator.peek().toString().matches("[*/]")) {
                             operator.add(tempOperator.pop());
                         }
                         tempOperator.push(chara);
@@ -72,10 +70,7 @@ public class CalculateServiceImpl implements CalculateService {
         for (int i = 0; i < operator.size(); i++) {
             if (operator.get(i) instanceof Fraction) { // 先将数字存入栈中
                 tempFrac.push((Fraction) operator.get(i));
-            }
-        }
-        for (int i = 1; i < operator.size(); i++) {
-            if (!(operator.get(i) instanceof Fraction)) {
+            } else { // 遇到运算符，从栈中取出两个数字进行运算
                 Fraction result;
                 if (operator.get(i).equals("+")) {
                     result = tempFrac.pop().add(tempFrac.pop());
@@ -93,6 +88,9 @@ public class CalculateServiceImpl implements CalculateService {
                     Fraction pop1 = tempFrac.pop();
                     Fraction pop2 = tempFrac.pop();
                     result = pop2.div(pop1);
+                    if (result == null) {
+                        return null;
+                    }
                 }
                 tempFrac.push(result);
             }

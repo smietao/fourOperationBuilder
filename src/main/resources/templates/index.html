@@ -161,7 +161,7 @@
                             let len = this.quesList.length
                             this.showTable = true
                             this.showQuesList = this.quesList.slice(0, this.selected) // 获取第一页的数据
-                            this.pagesSize = Math.ceil(len / this.selected)
+
                             if (len < 200 ) {
                                 this.selected = 10
                                 this.options = [10, 20, 50, 100]
@@ -172,7 +172,8 @@
                                 this.selected = 500
                                 this.options = [500]
                             }
-                        })
+                            this.pagesSize = Math.ceil(len / this.selected)
+                            })
                     } else {
                         // 没有输入数据或数据类型错误
                         if (!reg.test(this.inputNum) && !reg.test(this.inputScale)) {

@@ -256,6 +256,10 @@
                             this.errorList.push(index + 1)
                         }
                     }
+                    axios.post("http://localhost:8080/outputGrade?correct=Correct: " + this.correctList.length + " (" + this.correctList + ")&wrong=Wrong: " + this.errorList.length + " (" + this.errorList + ")")
+                        .then((res) => {
+                            console.log('生成结果文件');
+                        })
                 }
             }
         })

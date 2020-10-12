@@ -9,6 +9,7 @@ import com.gdut.builder.service.GenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -105,26 +106,55 @@ public class GenerateServiceImpl implements GenerateService {
 
     @Override
     public List<Result> generateList(int questionNum, int maxLimit) {
-        List<Result> resultList = new ArrayList<>();
-        int i = 1;
-        while (i <= questionNum) {
-            // 生成questionNum个结果
-            Result result = generate(maxLimit);
-            if (result == null) {
-                continue;
+        // 写入到文件的缓冲流
+        BufferedOutputStream bo;
+        BufferedOutputStream bo2;
+        try {
+            File file = new File("./Exercises.txt");
+            File file2 = new File("./Answers.txt");
+            bo = new BufferedOutputStream(new FileOutputStream(file));
+            bo2 = new BufferedOutputStream(new FileOutputStream(file2));
+            List<Result> resultList = new ArrayList<>();
+            int i = 1;
+            while (i <= questionNum) {
+                // 生成questionNum个结果
+                Result result = generate(maxLimit);
+                if (result == null) {
+                    continue;
+                }
+                // 设置题目编号
+                result.setNumber(i);
+                // 判断题目是否一样
+                boolean isSame = fractionService.checkSame(result, resultList);
+                if (isSame) {
+                    // 如果相同，跳过该运算式
+                    continue;
+                }
+                resultList.add(result);
+
+                // 将四则运算题目+答案 输出到 txt文件中
+                bo.write((i+". ").getBytes());
+                bo.write(result.toStringExp().getBytes());
+                bo.write("\r\n".getBytes());
+
+                bo2.write((i+". ").getBytes());
+                bo2.write(result.getAnswer().getBytes());
+                bo2.write("\r\n".getBytes());
+                i++;
             }
-            // 设置题目编号
-            result.setNumber(i);
-            // 判断题目是否一样
-            boolean isSame = fractionService.checkSame(result, resultList);
-            if (isSame) {
-                // 如果相同，跳过该运算式
-                continue;
-            }
-            resultList.add(result);
-            i++;
+            bo.flush();
+            bo2.flush();
+            bo.close();
+            bo2.close();
+            return resultList;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            System.out.println("文件输入输出异常");
+            e.printStackTrace();
+            return null;
         }
-        return resultList;
     }
 
     private List addBracket(List fractionList) {
@@ -177,8 +207,6 @@ public class GenerateServiceImpl implements GenerateService {
                 addDiff = 4;
             }
         }
-        System.out.println(addIndex);
-        System.out.println(addDiff);
         fractionList.add(addIndex, "(");
         fractionList.add(addIndex + addDiff, ")");
         return fractionList;
